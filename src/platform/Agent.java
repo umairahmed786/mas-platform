@@ -1,4 +1,7 @@
 package platform;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * 
@@ -11,6 +14,7 @@ public abstract class Agent extends Thread {
     
     private final String name;
     private final Environment env;
+    private final Queue<Message> mailBox;
 
     private boolean running = true;
     private boolean actionResult = false;
@@ -20,6 +24,8 @@ public abstract class Agent extends Thread {
     protected Agent(String name, Environment env){
         this.name = name;
         this.env = env;
+        this.mailBox = new LinkedList<>();
+        env.registerAgent(this);
     }
 
     public String getAgentName(){
@@ -32,6 +38,22 @@ public abstract class Agent extends Thread {
 
     public void stopAgent(){
         running = false;
+    }
+
+    public void sendMessage(Message message){
+        env.sendMessage(message);
+    };
+
+    public void receiveMessage(Message message) {
+        this.mailBox.add(message); 
+    }
+    public ArrayList<Message> getMessages() {
+        ArrayList<Message> messages = new ArrayList<>();
+        synchronized (mailBox) {
+            messages.addAll(mailBox);
+            mailBox.clear();
+        }
+        return messages;
     }
 
     protected abstract void perceive(boolean previousActionResult);

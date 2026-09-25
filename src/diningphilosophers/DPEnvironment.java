@@ -5,11 +5,13 @@ import platform.Environment;
 public class DPEnvironment extends Environment{
     private final int nb_philosophers;
     private final boolean[] forks;
+    private final DPAgent[] philosophers;
     private int thoughts = 0;
 
     public DPEnvironment(int nb_philosophers){
         this.nb_philosophers = nb_philosophers;
         forks = new boolean[nb_philosophers];
+        philosophers = new DPAgent[nb_philosophers];
 
         for (int i = 0; i < nb_philosophers; i++){
             forks[i] = true;
@@ -20,8 +22,12 @@ public class DPEnvironment extends Environment{
         return nb_philosophers;
     }
 
-    public boolean forkAvailable(int position){
-        return forks[position];
+    public void registerPhilosopher(DPAgent agent) {
+        philosophers[agent.position] = agent;
+    }
+
+    public DPAgent getPhilosopher(int pos) {
+        return philosophers[pos];
     }
 
     public synchronized boolean take(int f){
